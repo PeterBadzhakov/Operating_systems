@@ -138,7 +138,7 @@ ex ()
   fi
 }
 
-# CUSTOM ===================================
+# CUSTOM ====================================
 alias g++="-march=native -O3 -pipe -fno-plt"
 alias gcc="-march=native -O3 -pipe -fno-plt"
 alias cc="gcc"
