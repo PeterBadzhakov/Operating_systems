@@ -139,8 +139,6 @@ ex ()
 }
 
 # CUSTOM ====================================
-alias g++="-march=native -O3 -pipe -fno-plt"
-alias gcc="-march=native -O3 -pipe -fno-plt"
-alias cc="gcc"
-alias make="make -j4"
+export PATH="/usr/lib/ccache/bin/:$PATH"
 alias ls="ls -la"
+
