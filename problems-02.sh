@@ -129,7 +129,6 @@ function 02-a-5400()
 function 02-a-5401()
 {
     02-a-5400 | head -n 5 >02-a-5401.txt
-    cat 02-a-5401.txt
 }
 
 # -- 02-a-5402
