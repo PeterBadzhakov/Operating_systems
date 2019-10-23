@@ -19,8 +19,8 @@ function 02-a-0100()
 
 function 02-a-0500()
 {
-    local to_make="$HOME/practice-test/test1/"; # -p: make parent dirs too
-    mkdir -p $to_make && cd $to_make;
+    # -p: make parent dirs too
+    mkdir -p "$HOME/practice-test/test1/" && cd "$HOME/practice-test/test1/";
     touch test.txt;
     mv ./test.txt ../;
 }
