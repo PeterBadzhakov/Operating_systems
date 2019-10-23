@@ -87,7 +87,7 @@ function 02-a-4100()
 {
     local cur_time=`date +%s`; # seconds since Epoch.
     
-    for file in "$HOME/"*; do
+    for file in "$HOME"/*; do
         local file_mtime=`date -r "$file" +%s`; # mtime, Epoch format
 
         # Square brackets are important for 'if' to parse result!
@@ -119,18 +119,18 @@ function 02-a-5000()
 
 function 02-a-5400()
 {
-
+    find /etc/ -maxdepth 2 -type f 2>/dev/null;
 }
-
 
 # -- 02-a-5401
 # Създайте файл, който да съдържа само първите 5 реда от изхода на 02-a-5400
 
+# TODO: Break 02-a-5400 after the 5 lines.
 function 02-a-5401()
 {
-
+    02-a-5400 | head -n 5 >02-a-5401.txt
+    cat 02-a-5401.txt
 }
-
 
 # -- 02-a-5402
 # Изведете всички обикновени ("regular") файлове, които само 
@@ -138,18 +138,16 @@ function 02-a-5401()
 
 function 02-a-5402()
 {
-
+    find /etc/ -mindepth 2 -maxdepth 2 -type f 2>/dev/null;
 }
-
 
 # -- 02-a-5403
 # Изведете всички преки поддиректории на /etc
 
 function 02-a-5403()
 {
-
+    find /etc/ -mindepth 1 -maxdepth 1 -type d 2>/dev/null;
 }
-
 
 # -- 02-a-5500
 # Създайте файл, който да съдържа само последните 10 реда от изхода на 02-a-5403
