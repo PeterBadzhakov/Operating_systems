@@ -4,7 +4,8 @@
 shopt -s nullglob
 
 # -- 02-a-0100
-# Направете копие на файла /etc/passwd във вашата home директория под името my_passwd.
+# Направете копие на файла /etc/passwd във вашата home директория под името 
+# my_passwd.
 
 function 02-a-0100()
 {
