@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Wildcard in empty directories to give "", not \*.
-shopt -s nullglo
+shopt -s nullglob
 
 # -- 02-a-0100
 # Направете копие на файла /etc/passwd във вашата home директория под името my_passwd.
