@@ -86,16 +86,19 @@ function 02-a-4000()
 
 function 02-a-4100()
 {
-    local cur_time=`date +%s`; # seconds since Epoch.
+    find "$HOME"/ -mmin -61;
+    #             ^last mtime <61 mins ago.
+
+    #local cur_time=`date +%s`; # seconds since Epoch.
     
-    for file in "$HOME"/*; do
-        local file_mtime=`date -r "$file" +%s`; # mtime, Epoch format
+    #for file in "$HOME"/*; do
+    #    local file_mtime=`date -r "$file" +%s`; # mtime, Epoch format
         
         # Square brackets are important for 'if' to parse result!
-        if [[ $(( ($cur_time - $file_mtime) < 3600 )) ]]; then
-            echo "$file";
-        fi
-    done
+    #    if [[ $(( ($cur_time - $file_mtime) < 3600 )) ]]; then
+    #        echo "$file";
+    #    fi
+    #done
 }
 
 # -- 02-a-5000
@@ -129,7 +132,7 @@ function 02-a-5400()
 # TODO: Break 02-a-5400 after the 5 lines.
 function 02-a-5401()
 {
-    02-a-5400 | head -n 5 >02-a-5401.txt
+    02-a-5400 | head -n 5 >./02-a-5401.txt
 }
 
 # -- 02-a-5402
@@ -138,7 +141,7 @@ function 02-a-5401()
 
 function 02-a-5402()
 {
-    find /etc/ -mindepth 2 -maxdepth 2 -type f 2>/dev/null;
+    find /etc/ -type f -mindepth 2 -maxdepth 2 2>/dev/null;
 }
 
 # -- 02-a-5403
@@ -148,13 +151,13 @@ function 02-a-5403()
 {
     find /etc/ -mindepth 1 -maxdepth 1 -type d 2>/dev/null;
 }
-
+ # TODO: Debug from here.
 # -- 02-a-5500
 # Създайте файл, който да съдържа само последните 10 реда от изхода на 02-a-5403
 
 function 02-a-5500()
 {
-    
+    02-a-5403 | less >./02-a-5500.txt;
 }
 
 
@@ -163,7 +166,8 @@ function 02-a-5500()
 
 function 02-a-5501()
 {
-    
+    find "$HOME"/ -type f -size +42c;
+    #                     ^filesize >42 chars (bytes).
 }
 
 
@@ -172,7 +176,7 @@ function 02-a-5501()
 
 function 02-a-5503()
 {
-    
+    find SI/ -type f -group student;
 }
 
 
@@ -184,6 +188,12 @@ function 02-a-5503()
 
 function 02-a-5504()
 {
+    # -perm mode: perms are exactly mode.
+    # -perm -mode: all mode perms are set.
+    # -perm /mode: either mode perms are set.
+    
+    find SI/ -type f -group student -perm /g=w,o=w;
+    #                               ^file perms contain any of these.
     
 }
 
@@ -193,7 +203,10 @@ function 02-a-5504()
 
 function 02-a-5505()
 {
-    
+    # Access - the last time the file was read
+    # Modify - the last time the file was modified (content has been modified)
+    # Change - the last time metadata of the file was changed (e.g. permissions)
+    find / -newer ./02-a-5401.txt 2>/dev/null;
 }
 
 
@@ -204,16 +217,17 @@ function 02-a-5505()
 
 function 02-a-5506()
 {
-    
+    find "$HOME"/ -newer 02-a-5401.txt | rm -i;
 }
 
 
 # -- 02-a-6000
-# Намерете файловете в /bin, които могат да се четат, пишат и изпълняват от всички.
+# Намерете файловете в /bin, които могат да се четат, пишат и изпълняват от 
+# всички.
 
 function 02-a-6000()
 {
-    
+    find /bin/ -perm /o=rwx 2>/dev/null;
 }
 
 
@@ -224,7 +238,13 @@ function 02-a-6000()
 
 function 02-a-8000()
 {
+    mkdir -p "$HOME"/bin2;
+    #     ^Make if missing, don't warn.
     
+    for path in `02-a-6000`; do
+    #           ^Exact line-by-line output of that command.
+        cp "$path" "$HOME"/bin2;
+    done
 }
 
 
