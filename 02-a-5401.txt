@@ -1,5 +1,0 @@
-/etc/bash.bash_logout
-/etc/conf.d/wireless-regdom
-/etc/conf.d/rpcbind
-/etc/conf.d/samba
-/etc/conf.d/sensord

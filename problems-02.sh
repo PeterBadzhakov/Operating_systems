@@ -21,7 +21,9 @@ function 02-a-0100()
 function 02-a-0500()
 {
     # -p: make parent dirs too
-    mkdir -p "$HOME/practice-test/test1/" && cd "$HOME/practice-test/test1/";
+    mkdir -p "$HOME/practice-test/test1/" && \
+        cd "$HOME/practice-test/test1/" || return 1;
+    #                                   ^Upon error.
     touch test.txt;
     mv ./test.txt ../;
 }
@@ -37,7 +39,7 @@ function 02-a-0600()
         mkdir "$HOME/dir1";
     fi
     
-    cp /tmp/os2018/practice/01/{f1,f2,f3} $HOME/dir1/;
+    cp /tmp/os2018/practice/01/{f1,f2,f3} "$HOME"/dir1/;
 }
 
 # -- 02-a-0601
@@ -88,17 +90,6 @@ function 02-a-4100()
 {
     find "$HOME"/ -mmin -61;
     #             ^last mtime <61 mins ago.
-
-    #local cur_time=`date +%s`; # seconds since Epoch.
-    
-    #for file in "$HOME"/*; do
-    #    local file_mtime=`date -r "$file" +%s`; # mtime, Epoch format
-        
-        # Square brackets are important for 'if' to parse result!
-    #    if [[ $(( ($cur_time - $file_mtime) < 3600 )) ]]; then
-    #        echo "$file";
-    #    fi
-    #done
 }
 
 # -- 02-a-5000
@@ -129,7 +120,6 @@ function 02-a-5400()
 # -- 02-a-5401
 # Създайте файл, който да съдържа само първите 5 реда от изхода на 02-a-5400
 
-# TODO: Break 02-a-5400 after the 5 lines.
 function 02-a-5401()
 {
     02-a-5400 | head -n 5 >./02-a-5401.txt
@@ -151,15 +141,14 @@ function 02-a-5403()
 {
     find /etc/ -mindepth 1 -maxdepth 1 -type d 2>/dev/null;
 }
- # TODO: Debug from here.
+
 # -- 02-a-5500
 # Създайте файл, който да съдържа само последните 10 реда от изхода на 02-a-5403
 
 function 02-a-5500()
 {
-    02-a-5403 | less >./02-a-5500.txt;
+    02-a-5403 | tail -n 10 >./02-a-5500.txt;
 }
-
 
 # -- 02-a-5501
 # Изведете обикновените файлове по-големи от 42 байта в home директорията ви
@@ -170,7 +159,6 @@ function 02-a-5501()
     #                     ^filesize >42 chars (bytes).
 }
 
-
 # -- 02-a-5503
 # Изведете всички обикновени файлове в директорията SI които са от групата student
 
@@ -178,7 +166,6 @@ function 02-a-5503()
 {
     find SI/ -type f -group student;
 }
-
 
 # -- 02-a-5504
 # Изведете всички обикновени файлове в директорията SI които са
@@ -188,15 +175,14 @@ function 02-a-5503()
 
 function 02-a-5504()
 {
-    # -perm mode: perms are exactly mode.
-    # -perm -mode: all mode perms are set.
-    # -perm /mode: either mode perms are set.
-    
+    # -perm mode: perms are exactly mode per division.
+    # -perm -mode: all mode perms are set per division.
+    # -perm /mode: either mode perms are set per division.
+
     find SI/ -type f -group student -perm /g=w,o=w;
     #                               ^file perms contain any of these.
     
 }
-
 
 # -- 02-a-5505
 # Изведете всички файлове, които са по-нови от създадения файл в 02-a-5401
@@ -209,7 +195,6 @@ function 02-a-5505()
     find / -newer ./02-a-5401.txt 2>/dev/null;
 }
 
-
 # -- 02-a-5506
 # Изтрийте файловете в home директорията си по-нови от създаденият
 # в 02-a-5401 файл (подайте на rm опция -i за да може да изберете само
@@ -217,9 +202,8 @@ function 02-a-5505()
 
 function 02-a-5506()
 {
-    find "$HOME"/ -newer 02-a-5401.txt | rm -i;
+    find "$HOME"/ -newer 02-a-5401.txt -exec rm -i '{}' ';' ;
 }
-
 
 # -- 02-a-6000
 # Намерете файловете в /bin, които могат да се четат, пишат и изпълняват от 
@@ -227,9 +211,8 @@ function 02-a-5506()
 
 function 02-a-6000()
 {
-    find /bin/ -perm /o=rwx 2>/dev/null;
+    find /bin/ -perm -o=rwx 2>/dev/null;
 }
-
 
 # -- 02-a-8000
 # Копирайте всички файлове от /bin, които могат да се четат, пишат
@@ -241,12 +224,16 @@ function 02-a-8000()
     mkdir -p "$HOME"/bin2;
     #     ^Make if missing, don't warn.
     
-    for path in `02-a-6000`; do
-    #           ^Exact line-by-line output of that command.
-        cp "$path" "$HOME"/bin2;
-    done
-}
+    02-a-6000 | xargs -L 1 -I "FROM" \
+    #                 ^Max lines per command execution.
+        cp "FROM" "$HOME"/bin2 2>/dev/null;
 
+    # Simpler version:
+    #for path in $(02-a-6000); do
+    #            ^Exact line-by-line output of that command.
+    #    cp "$path" "$HOME"/bin2 2>/dev/null;
+    #done
+}
 
 # -- 02-a-9000
 # от предната задача: когато вече сте получили home/../../bin2 с команди,
@@ -256,16 +243,13 @@ function 02-a-8000()
 
 function 02-a-9000()
 {
-    tar -c -f "$HOME"/bin2/b_start.tar "$HOME"/bin2/*;
+    tar -c -f "$HOME"/bin2/b_start.tar "$HOME"/bin2/* 2>/dev/null;
 
-    for file in "$HOME"/bin2; do
-        tar -c -f "$file.tar" "$file";
+    for file in "$HOME"/bin2/b*; do
+    #                        ^TODO: Exclude ending in .tar.
+        tar -c -f "$file.tar" "$file" 2>/dev/null;
     done
 }
-
-
-
-
 
 # -- 02-a-9500
 # Използвайки едно извикване на командата find, отпечатайте броя на
@@ -276,22 +260,22 @@ function 02-a-9500()
     find "$HOME"/ -type f -exec wc -l '{}' ';';
 }
 
-
 # -- 02-b-4000
 # Копирайте най-големия файл от тези, намиращи се в /tmp/os2018/02/bytes/,
 # в home директорията си.
 
 function 02-b-4000()
 {
-    find /tmp/os2018/02/bytes/ -type f -print '%s %p\n' |
-    #                                          ^Filesize (bytes), filepath of.
+    # Print filesize (bytes) + filepath.
+    # Sort numerically, reverse order, line by line.
+    # Set delimiter, take second field (single ' ' from printf). 
+    # Replace "FROM" with 'cp "FROM"...',
+    # where "FROM" is cut's pipe.
+    
+    find /tmp/os2018/02/bytes/ -type f -printf '%s %p\n' |
         sort -n -r |
-    #        ^Sort numerically, reverse order, line by line.
-            cut -d ' ' -f 2 |
-    #           ^Set delimiter, second field. find printf puts one ' '!
-                xargs -I "FROM" cp "FROM" "$HOME/";
-    #                 ^Replace "FROM" with 'cp "FROM"...',
-    #                  where "FROM" is cut's pipe.
+            head -n 1 |
+                cut -d ' ' -f 2 |
+                    xargs -I "FROM" \
+                        cp "FROM" "$HOME"/;
 }
-
-
