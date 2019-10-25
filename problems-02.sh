@@ -256,7 +256,11 @@ function 02-a-8000()
 
 function 02-a-9000()
 {
-    
+    tar -c -f "$HOME"/bin2/b_start.tar "$HOME"/bin2/*;
+
+    for file in "$HOME"/bin2; do
+        tar -c -f "$file.tar" "$file";
+    done
 }
 
 
@@ -269,7 +273,7 @@ function 02-a-9000()
 
 function 02-a-9500()
 {
-    
+    find "$HOME"/ -type f -exec wc -l '{}' ';';
 }
 
 
@@ -279,7 +283,15 @@ function 02-a-9500()
 
 function 02-b-4000()
 {
-    
+    find /tmp/os2018/02/bytes/ -type f -print '%s %p\n' |
+    #                                          ^Filesize (bytes), filepath of.
+        sort -n -r |
+    #        ^Sort numerically, reverse order, line by line.
+            cut -d ' ' -f 2 |
+    #           ^Set delimiter, second field. find printf puts one ' '!
+                xargs -I "FROM" cp "FROM" "$HOME/";
+    #                 ^Replace "FROM" with 'cp "FROM"...',
+    #                  where "FROM" is cut's pipe.
 }
 
 
