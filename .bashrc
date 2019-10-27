@@ -140,5 +140,5 @@ ex ()
 
 # CUSTOM ====================================
 export PATH="/usr/lib/ccache/bin/:$PATH"
-alias ls="ls -la"
+alias ls="ls -lah"
 
