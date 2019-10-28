@@ -8,9 +8,8 @@ shopt -s nullglob
 
 function 03-a-0200()
 {
-    
+    sort -t ':' -k 3 /etc/passwd;
 }
-
 
 # -- 03-a-0201
 # Сортирайте /etc/passwd числово по поле UserID.
@@ -18,7 +17,7 @@ function 03-a-0200()
 
 function 03-a-0201()
 {
-    
+    sort -t ':' -k 3 -n /etc/passwd;
 }
 
 
@@ -27,27 +26,25 @@ function 03-a-0201()
 
 function 03-a-0210()
 {
-    
+    cut -d ':' -f 1,5 /etc/passwd;
 }
 
-
 # -- 03-a-0211
-# Изведете съдържанието на файла /etc/passwd от 2-ри до 6-ти символ.
+# Изведете съдържанието на файла /etc/passwd от 2-ри до 6-ти символ на всеки ред.
 
 function 03-a-0211()
 {
-    
+    cut -c2-6 /etc/passwd;
 }
-
 
 # -- 03-a-1500
 # Намерете броя на символите в /etc/passwd. А колко реда има в /etc/passwd?
 
 function 03-a-1500()
 {
-    
+    wc -m /etc/passwd;
+    wc -l /etc/passwd;
 }
-
 
 # -- 03-a-2000
 # Извадете от файл /etc/passwd:
@@ -60,27 +57,31 @@ function 03-a-1500()
 
 function 03-a-2000()
 {
-    
-}
+    head -n 12 /etc/passwd;
+    head -c 26 /etc/passwd;
+    head -n -4 /etc/passwd;
+    tail -n 17 /etc/passwd;
 
+    # line number N == cut -d $'\n' -f N ...
+    head -n 151 /etc/passwd | tail -n 1;
+    head -n 13 /etc/passwd | tail -c 4;
+}
 
 # -- 03-a-2100
 # Отпечатайте потребителските имена и техните home директории от /etc/passwd.
 
 function 03-a-2100()
 {
-    
+    cut -d ':' -f 1,6 /etc/passwd;
 }
-
 
 # -- 03-a-2110
 # Отпечатайте втората колона на /etc/passwd, разделена спрямо символ '/'.
 
 function 03-a-2110()
 {
-    
+    cut -d '/' -f 2 /etc/passwd;
 }
-
 
 # -- 03-a-3000
 # Запаметете във файл в своята home директория резултатът от командата
@@ -89,9 +90,12 @@ function 03-a-2110()
 
 function 03-a-3000()
 {
-    
+    cd "$HOME";
+    ls -l 2>/dev/null >.ls.txt;
+    tr .ls.txt ' ' > .ls.txt.2;
+    sort -t ' ' -k 2 >.ls.txt.sort.l;
+    sort -t ' ' -k 2 -n >.ls.txt.sort.n;
 }
-
 
 # -- 03-a-5000
 # Отпечатайте 2 реда над вашия ред в /etc/passwd и 3 реда под него
@@ -99,18 +103,17 @@ function 03-a-3000()
 
 function 03-a-5000()
 {
-    
+    grep -B 2 -A 3 $(id -ur) /etc/passwd;
+    #               ^Real ID of user (name, not number).
 }
-
 
 # -- 03-a-5001
 # Колко хора не се казват Ivan според /etc/passwd
 
 function 03-a-5001()
 {
-    
+    grep -v "Ivan" ~/Desktop/operating_systems/passwd.txt | wc -l;
 }
-
 
 # -- 03-a-5002
 # Изведете имената на хората с второ име по-дълго от 7 (>7)
@@ -118,7 +121,7 @@ function 03-a-5001()
 
 function 03-a-5002()
 {
-    
+    cut -d ':' -f 5 ~/Desktop/operating_systems/passwd.txt | grep -E -o "[a-zA-Z]+[\t ]+[a-zA-Z]{8,}";
 }
 
 
@@ -128,7 +131,7 @@ function 03-a-5002()
 
 function 03-a-5003()
 {
-    
+    cut -d ':' -f 5 ~/Desktop/operating_systems/passwd.txt | grep -E -o "[a-zA-Z]+[\t ]+[a-zA-Z]{1,7}";
 }
 
 
@@ -137,16 +140,17 @@ function 03-a-5003()
 
 function 03-a-5004()
 {
-    
+    03-a-5003 | xargs -L 1 -I "NAME" \
+        grep -I "NAME" ~/Desktop/operating_systems/passwd.txt;
 }
-
+03-a-5004
 
 # -- 03-b-0300
 # Намерете факултетния си номер във файлa /etc/passwd.
 
 function 03-b-0300()
 {
-    
+    grep "45146" /etc/passwd;
 }
 
 
@@ -156,7 +160,7 @@ function 03-b-0300()
 
 function 03-b-3000()
 {
-    
+    cut -d ':' -f 1 /etc/passwd >"$HOME"/users;
 }
 
 
