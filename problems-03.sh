@@ -143,7 +143,6 @@ function 03-a-5004()
     03-a-5003 | xargs -L 1 -I "NAME" \
         grep -I "NAME" ~/Desktop/operating_systems/passwd.txt;
 }
-03-a-5004
 
 # -- 03-b-0300
 # Намерете факултетния си номер във файлa /etc/passwd.
@@ -163,16 +162,14 @@ function 03-b-3000()
     cut -d ':' -f 1 /etc/passwd >"$HOME"/users;
 }
 
-
 # -- 03-b-3400
 # Колко коментара има във файла /etc/services ? Коментарите се
 # маркират със символа #, след който всеки символ на реда се счита за коментар.
 
 function 03-b-3400()
 {
-    
+    grep -E "^#.*" $1 | wc -l;
 }
-
 
 # -- 03-b-3450
 # Вижте man 5 services. Напишете команда, която ви дава името на
@@ -192,7 +189,7 @@ function 03-b-3450()
 
 function 03-b-3500()
 {
-    
+    file -b /bin/* | grep -E "(script|ASCII)" | wc -l;
 }
 
 
@@ -204,9 +201,17 @@ function 03-b-3500()
 
 function 03-b-3600()
 {
-    
-}
+    # find: ‘<absolute_path>’: Permission denied
+    find / -maxdepth 3 -type d 2>03-b-3600.noaccess.raw 1>/dev/null;
+    cut 03-b-3600.noaccess.raw -d ' ' -f 2 | 
+        cut -d ':' -f 1 > 03-b-3600.noaccess.txt;
+    rm 03-b-3600.noaccess.raw;
+    wc -l 03-b-3600.noaccess.txt;
 
+    # <absolute_path>
+    find / -maxdepth 3 -type d 1>03-b-3600.access.txt 2>/dev/null;
+    wc -l 03-b-3600.access.txt;
+}
 
 # -- 03-b-4000
 # Създайте следната файлова йерархия.
