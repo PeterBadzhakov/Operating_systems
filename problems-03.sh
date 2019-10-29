@@ -168,7 +168,7 @@ function 03-b-3000()
 
 function 03-b-3400()
 {
-    grep -E "^#.*" $1 | wc -l;
+    grep -E "^#.*" | wc -l;
 }
 
 # -- 03-b-3450
@@ -179,7 +179,7 @@ function 03-b-3400()
 
 function 03-b-3450()
 {
-    
+    echo "TODO:";
 }
 
 
@@ -221,7 +221,7 @@ function 03-b-3600()
 
 function 03-b-4000()
 {
-    
+    echo "TODO:";
 }
 
 
@@ -265,7 +265,7 @@ function 03-b-4000()
 
 function 03-b-4001()
 {
-    
+    echo "TODO:";
 }
 
 
@@ -274,7 +274,7 @@ function 03-b-4001()
 
 function 03-b-4002()
 {
-    
+    echo "TODO:";
 }
 
 
@@ -283,7 +283,7 @@ function 03-b-4002()
 
 function 03-b-4003()
 {
-    
+    echo "TODO:";
 }
 
 
@@ -294,7 +294,7 @@ function 03-b-4003()
 
 function 03-b-4004()
 {
-    
+    echo "TODO:";
 }
 
 
@@ -304,7 +304,7 @@ function 03-b-4004()
 
 function 03-b-4005()
 {
-    
+    echo "TODO:";
 }
 
 
@@ -314,7 +314,7 @@ function 03-b-4005()
 
 function 03-b-5200()
 {
-    
+    echo "TODO:";
 }
 
 
@@ -324,7 +324,7 @@ function 03-b-5200()
 
 function 03-b-5300()
 {
-    
+    echo "TODO:";
 }
 
 
@@ -334,7 +334,7 @@ function 03-b-5300()
 
 function 03-b-5400()
 {
-    
+    echo "TODO:";
 }
 
 
@@ -344,7 +344,7 @@ function 03-b-5400()
 
 function 03-b-6100()
 {
-    
+    echo "TODO:";
 }
 
 
@@ -354,7 +354,7 @@ function 03-b-6100()
 
 function 03-b-6700()
 {
-    
+    echo "TODO:";
 }
 
 
@@ -366,7 +366,7 @@ function 03-b-6700()
 
 function 03-b-6900()
 {
-    
+    echo "TODO:";
 }
 
 
@@ -377,7 +377,7 @@ function 03-b-6900()
 
 function 03-b-7000()
 {
-    
+    echo "TODO:";
 }
 
 
@@ -387,7 +387,7 @@ function 03-b-7000()
 
 function 03-b-7500()
 {
-    
+    cat /etc/services | tr ' ' '\n' | sort | uniq -c | sort -n -r | tail -n +2 | head
 }
 
 
@@ -397,9 +397,12 @@ function 03-b-7500()
 
 function 03-b-8000()
 {
-    
+    cat ~/Desktop/operating_systems/passwd.txt | 
+        cut -d ':' -f 6 | 
+            grep "SI/s" | 
+                cut -c11- |
+                    sort -n >"$HOME"/Desktop/operating_systems/SI.txt;
 }
-
 
 # -- 03-b-8500
 # За всеки логнат потребител изпишете "Hello, потребител", като ако
@@ -407,9 +410,28 @@ function 03-b-8000()
 
 function 03-b-8500()
 {
+    w -sh | 
+        grep "$(whoami)" | 
+            tr -s ' ' | 
+                cut -d ' ' -f1,2 >self.txt;
     
-}
+    while read -r line; do
+        local name=$(echo "$line" | cut -d ' ' -f 1);
+        local tty=$(echo "$line" | cut -d ' ' -f 2);
+        echo "Hello, $(whoami) - this is me!" | write "$name" "$tty";
+    done <self.txt
 
+    w -sh | 
+        grep -v "$(whoami)" | 
+            tr -s ' ' | 
+                cut -d ' ' -f1,2 >others.txt;
+    
+    while read -r line; do
+        local name=$(echo "$line" | cut -d ' ' -f 1);
+        local tty=$(echo "$line" | cut -d ' ' -f 2);
+        echo "Hello, $name" | write "$name" "$tty";
+    done <others.txt
+}
 
 # Пример:
 # hello, human - this is me!
@@ -421,7 +443,7 @@ function 03-b-8500()
 
 function 03-b-8520()
 {
-    
+    echo "TODO:";
 }
 
 
@@ -433,7 +455,7 @@ function 03-b-8520()
 
 function 03-b-8600()
 {
-    
+    echo "TODO:";
 }
 
 
@@ -447,7 +469,7 @@ function 03-b-8600()
 
 function 03-b-8700()
 {
-    
+    echo "TODO:";
 }
 
 
@@ -458,7 +480,7 @@ function 03-b-8700()
 
 function 03-b-9000()
 {
-    
+    echo "TODO:";
 }
 
 
@@ -467,7 +489,7 @@ function 03-b-9000()
 
 function 03-b-9050()
 {
-    
+    echo "TODO:";
 }
 
 
@@ -477,7 +499,7 @@ function 03-b-9050()
 
 function 03-b-9051()
 {
-    
+    echo "TODO:";
 }
 
 
@@ -487,7 +509,7 @@ function 03-b-9051()
 
 function 03-b-9052()
 {
-    
+    echo "TODO:";
 }
 
 
@@ -498,7 +520,7 @@ function 03-b-9052()
 
 function 03-b-9053()
 {
-    
+    echo "TODO:";
 }
 
 
@@ -508,7 +530,7 @@ function 03-b-9053()
 
 function 03-b-9054()
 {
-    
+    echo "TODO:";
 }
 
 
@@ -518,7 +540,7 @@ function 03-b-9054()
 
 function 03-b-9100()
 {
-    
+    echo "TODO:";
 }
 
 
@@ -528,7 +550,7 @@ function 03-b-9100()
 
 function 03-b-9101()
 {
-    
+    echo "TODO:";
 }
 
 
@@ -537,7 +559,7 @@ function 03-b-9101()
 
 function 03-b-9102()
 {
-    
+    echo "TODO:";
 }
 
 
@@ -547,7 +569,7 @@ function 03-b-9102()
 
 function 03-b-9103()
 {
-    
+    echo "TODO:";
 }
 
 
@@ -556,7 +578,7 @@ function 03-b-9103()
 
 function 03-b-9104()
 {
-    
+    echo "TODO:";
 }
 
 
@@ -565,7 +587,7 @@ function 03-b-9104()
 
 function 03-b-9105()
 {
-    
+    echo "TODO:";
 }
 
 
@@ -576,7 +598,7 @@ function 03-b-9105()
 
 function 03-b-9106()
 {
-    
+    echo "TODO:";
 }
 
 
@@ -587,7 +609,7 @@ function 03-b-9106()
 
 function 03-b-9200()
 {
-    
+    echo "TODO:";
 }
 
 
@@ -599,7 +621,7 @@ function 03-b-9200()
 
 function 03-b-9300()
 {
-    
+    echo "TODO:";
 }
 
 
@@ -646,7 +668,7 @@ function 03-b-9300()
 
 function 03-b-9500()
 {
-    
+    echo "TODO:";
 }
 
 
