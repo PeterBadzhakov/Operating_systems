@@ -91,11 +91,14 @@ function 03-a-2110()
 function 03-a-3000()
 {
     cd "$HOME";
-    ls -l 2>/dev/null >.ls.txt;
-    tr .ls.txt ' ' > .ls.txt.2;
-    sort -t ' ' -k 2 >.ls.txt.sort.l;
-    sort -t ' ' -k 2 -n >.ls.txt.sort.n;
+    ls -l >.ls.txt;
+    tr -s ' '<.ls.txt >.ls.txt.2;
+    sort -t ' ' -k 2 <.ls.txt.2 >.ls.txt.sort.l;
+    sort -t ' ' -k 2 -n <.ls.txt.2 >.ls.txt.sort.n;
+
+    rm -f .ls*;
 }
+03-a-3000
 
 # -- 03-a-5000
 # Отпечатайте 2 реда над вашия ред в /etc/passwd и 3 реда под него
@@ -112,7 +115,7 @@ function 03-a-5000()
 
 function 03-a-5001()
 {
-    grep -v "Ivan" ~/Desktop/operating_systems/passwd.txt | wc -l;
+    grep -v -c "Ivan" ~/Desktop/operating_systems/passwd.txt;
 }
 
 # -- 03-a-5002
@@ -121,7 +124,8 @@ function 03-a-5001()
 
 function 03-a-5002()
 {
-    cut -d ':' -f 5 ~/Desktop/operating_systems/passwd.txt | grep -E -o "[a-zA-Z]+[\t ]+[a-zA-Z]{8,}";
+    cut -d ':' -f 5 ~/Desktop/operating_systems/passwd.txt | 
+        grep -E -o "[a-zA-Z]+[\t ]+[a-zA-Z]{8,}";
 }
 
 
@@ -131,7 +135,8 @@ function 03-a-5002()
 
 function 03-a-5003()
 {
-    cut -d ':' -f 5 ~/Desktop/operating_systems/passwd.txt | grep -E -o "[a-zA-Z]+[\t ]+[a-zA-Z]{1,7}";
+    cut -d ':' -f 5 ~/Desktop/operating_systems/passwd.txt | 
+        grep -E -o "[a-zA-Z]+[\t ]+[a-zA-Z]{1,7}";
 }
 
 
