@@ -407,30 +407,16 @@ function 03-b-8000()
 # -- 03-b-8500
 # За всеки логнат потребител изпишете "Hello, потребител", като ако
 # това е вашият потребител, напишете "Hello, потребител - this is me!".
-
+# sed - username -> "hello ...". second sed -> $(id)
 function 03-b-8500()
 {
-    w -sh | 
-        grep "$(whoami)" | 
-            tr -s ' ' | 
-                cut -d ' ' -f1,2 >self.txt;
-    
-    while read -r line; do
-        local name=$(echo "$line" | cut -d ' ' -f 1);
-        local tty=$(echo "$line" | cut -d ' ' -f 2);
-        echo "Hello, $(whoami) - this is me!" | write "$name" "$tty";
-    done <self.txt
-
-    w -sh | 
-        grep -v "$(whoami)" | 
-            tr -s ' ' | 
-                cut -d ' ' -f1,2 >others.txt;
-    
-    while read -r line; do
-        local name=$(echo "$line" | cut -d ' ' -f 1);
-        local tty=$(echo "$line" | cut -d ' ' -f 2);
-        echo "Hello, $name" | write "$name" "$tty";
-    done <others.txt
+    w -sh |
+        grep -v "$(whoami)" |
+            cut -d ' ' -f 1 |
+                sort |
+                    uniq |
+                        xargs -L 1 echo "Hello, ";
+    echo "Hello, $(whoami) - this is me!";s
 }
 
 # Пример:
