@@ -98,7 +98,6 @@ function 03-a-3000()
 
     rm -f .ls*;
 }
-03-a-3000
 
 # -- 03-a-5000
 # Отпечатайте 2 реда над вашия ред в /etc/passwd и 3 реда под него
@@ -124,10 +123,13 @@ function 03-a-5001()
 
 function 03-a-5002()
 {
-    cut -d ':' -f 5 ~/Desktop/operating_systems/passwd.txt | 
-        grep -E -o "[a-zA-Z]+[\t ]+[a-zA-Z]{8,}";
-}
+    if [[ $1 == "" ]]; then
+        set -- "8";
+    fi
 
+    cut -d ':' -f 5 ~/Desktop/operating_systems/passwd.txt | 
+        grep -E -o "[a-zA-Z]+[\t ]+[a-zA-Z]{$1,}";
+}
 
 # -- 03-a-5003
 # Изведете имената на хората с второ име по-късо от 8 (<=7)
@@ -135,10 +137,11 @@ function 03-a-5002()
 
 function 03-a-5003()
 {
-    cut -d ':' -f 5 ~/Desktop/operating_systems/passwd.txt | 
-        grep -E -o "[a-zA-Z]+[\t ]+[a-zA-Z]{1,7}";
+    cut -f 5 -d ':' ~/Desktop/operating_systems/passwd.txt |
+        { grep -E -o "[a-zA-Z]+[\t ]+[a-zA-Z]+"; 03-a-5002; } |
+            sort |
+                uniq -u;
 }
-
 
 # -- 03-a-5004
 # Изведете целите редове от /etc/passwd за хората от 03-a-5003
@@ -173,7 +176,7 @@ function 03-b-3000()
 
 function 03-b-3400()
 {
-    grep -E "^#.*" | wc -l;
+    grep -c -E "^.*#.*" /etc/services;
 }
 
 # -- 03-b-3450
@@ -184,9 +187,9 @@ function 03-b-3400()
 
 function 03-b-3450()
 {
-    echo "TODO:";
+    grep -E ".*[ ]+$1/.*" /etc/services |
+        cut -d ' ' -f 1;
 }
-
 
 # -- 03-b-3500
 # Колко файлове в /bin са shell script? (Колко файлове в дадена
@@ -194,9 +197,8 @@ function 03-b-3450()
 
 function 03-b-3500()
 {
-    file -b /bin/* | grep -E "(script|ASCII)" | wc -l;
+    file -b /bin/* | grep -c -E "(script|ASCII)";
 }
-
 
 # -- 03-b-3600
 # Направете списък с директориите на вашата файлова система, до
@@ -207,15 +209,10 @@ function 03-b-3500()
 function 03-b-3600()
 {
     # find: ‘<absolute_path>’: Permission denied
-    find / -maxdepth 3 -type d 2>03-b-3600.noaccess.raw 1>/dev/null;
-    cut 03-b-3600.noaccess.raw -d ' ' -f 2 | 
-        cut -d ':' -f 1 > 03-b-3600.noaccess.txt;
-    rm 03-b-3600.noaccess.raw;
-    wc -l 03-b-3600.noaccess.txt;
+    find / -maxdepth 3 -type d -not -perm /u=x,g=x,o=x;
 
     # <absolute_path>
-    find / -maxdepth 3 -type d 1>03-b-3600.access.txt 2>/dev/null;
-    wc -l 03-b-3600.access.txt;
+    find / -maxdepth 3 -type d -perm /u=x,g=x,o=x;
 }
 
 # -- 03-b-4000
@@ -226,9 +223,10 @@ function 03-b-3600()
 
 function 03-b-4000()
 {
-    echo "TODO:";
+    mkdir -p /home/s45146/dir1;
+    touch /home/s45146/dir1/file{1,2,3};
 }
-
+03-b-4000
 
 # Посредством vi въведете следното съдържание:
 # file1:

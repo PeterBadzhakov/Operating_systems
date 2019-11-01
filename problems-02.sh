@@ -273,6 +273,6 @@ function 02-b-4000()
         sort -n -r |
             head -n 1 |
                 cut -d ' ' -f 2 |
-                    xargs -I "FROM" \
+                    xargs -L 1 -I "FROM" \
                         cp "FROM" "$HOME"/;
 }
