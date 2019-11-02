@@ -9,7 +9,7 @@
             "request": "launch",
             "name": "Bash-Debug (hardcoded script name)",
             "cwd": "${workspaceFolder}",
-            "program": "${workspaceFolder}/problems-03.sh",
+            "program": "${workspaceFolder}/problems-pdf.sh",
             "args": []
         },
         {
