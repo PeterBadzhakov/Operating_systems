@@ -7,7 +7,7 @@ shopt -s nullglob
 # Сортирайте /etc/passwd лексикографски по поле UserID.
 
 function 03-a-0200()
-{
+{ 
     sort -t ':' -k 3 /etc/passwd;
 }
 
