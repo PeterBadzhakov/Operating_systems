@@ -142,3 +142,29 @@ ex ()
 export PATH="/usr/lib/ccache/bin/:$PATH"
 alias ls="ls -lah"
 
+function get_by_regex()
+{
+        if ! [ $# -gt 0 ]; then
+                echo "Pass words to look for in pamac repository!";
+                return 1;
+        fi
+
+        pacman -Ss $@ | grep "^[^ ]" | cut -d '/' -f 2 | cut -d ' ' -f 1;
+}
+function install_all()
+{
+	TO_INSTALL="$(get_by_regex $@ | tr '[\n]' '[ ]')";
+	if [[ $(echo ${TO_INSTALL} | wc -c) == 1 ]]; then
+		echo "No packages found!"
+		return 1
+	fi
+        TO_INSTALL="${TO_INSTALL%?}";
+
+	sudo pacman -S ${TO_INSTALL};
+}
+
+alias search="pacman -Ss"
+alias get="install_all"
+alias delete="sudo pacman -Rcs"
+
+
