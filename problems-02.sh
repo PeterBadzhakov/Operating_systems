@@ -35,10 +35,7 @@ function 02-a-0500()
 
 function 02-a-0600()
 {
-    if [[ ! -e "$HOME/dir1" ]]; then
-        mkdir "$HOME/dir1";
-    fi
-    
+    mkdir -p "$HOME/dir1";
     cp /tmp/os2018/practice/01/{f1,f2,f3} "$HOME"/dir1/;
 }
 
@@ -276,6 +273,6 @@ function 02-b-4000()
         sort -n -r |
             head -n 1 |
                 cut -d ' ' -f 2 |
-                    xargs -I "FROM" \
+                    xargs -L 1 -I "FROM" \
                         cp "FROM" "$HOME"/;
 }

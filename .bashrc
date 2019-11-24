@@ -140,8 +140,10 @@ ex ()
 
 # CUSTOM ====================================
 export PATH="/usr/lib/ccache/bin/:$PATH"
+export PATH_BACKUP="/usr/lib/ccache/bin/:/home/frank/.local/bin:/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/bin/site_perl:/usr/bin/vendor_perl:/usr/bin/core_perl"
 alias ls="ls -lah"
 
+<<<<<<< HEAD
 function get_by_regex()
 {
         if ! [ $# -gt 0 ]; then
@@ -167,4 +169,6 @@ alias search="pacman -Ss"
 alias get="install_all"
 alias delete="sudo pacman -Rcs"
 
+=======
+>>>>>>> 8ef4447aa23b12f145b2603d54cc1547c72966b9
 

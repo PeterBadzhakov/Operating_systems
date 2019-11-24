@@ -7,10 +7,9 @@ shopt -s nullglob
 # Сортирайте /etc/passwd лексикографски по поле UserID.
 
 function 03-a-0200()
-{
-    
+{ 
+    sort -t ':' -k 3 /etc/passwd;
 }
-
 
 # -- 03-a-0201
 # Сортирайте /etc/passwd числово по поле UserID.
@@ -18,7 +17,7 @@ function 03-a-0200()
 
 function 03-a-0201()
 {
-    
+    sort -t ':' -k 3 -n /etc/passwd;
 }
 
 
@@ -27,27 +26,25 @@ function 03-a-0201()
 
 function 03-a-0210()
 {
-    
+    cut -d ':' -f 1,5 /etc/passwd;
 }
 
-
 # -- 03-a-0211
-# Изведете съдържанието на файла /etc/passwd от 2-ри до 6-ти символ.
+# Изведете съдържанието на файла /etc/passwd от 2-ри до 6-ти символ на всеки ред.
 
 function 03-a-0211()
 {
-    
+    cut -c2-6 /etc/passwd;
 }
-
 
 # -- 03-a-1500
 # Намерете броя на символите в /etc/passwd. А колко реда има в /etc/passwd?
 
 function 03-a-1500()
 {
-    
+    wc -m /etc/passwd;
+    wc -l /etc/passwd;
 }
-
 
 # -- 03-a-2000
 # Извадете от файл /etc/passwd:
@@ -60,27 +57,31 @@ function 03-a-1500()
 
 function 03-a-2000()
 {
-    
-}
+    head -n 12 /etc/passwd;
+    head -c 26 /etc/passwd;
+    head -n -4 /etc/passwd;
+    tail -n 17 /etc/passwd;
 
+    # line number N == cut -d $'\n' -f N ...
+    head -n 151 /etc/passwd | tail -n 1;
+    head -n 13 /etc/passwd | tail -c 4;
+}
 
 # -- 03-a-2100
 # Отпечатайте потребителските имена и техните home директории от /etc/passwd.
 
 function 03-a-2100()
 {
-    
+    cut -d ':' -f 1,6 /etc/passwd;
 }
-
 
 # -- 03-a-2110
 # Отпечатайте втората колона на /etc/passwd, разделена спрямо символ '/'.
 
 function 03-a-2110()
 {
-    
+    cut -d '/' -f 2 /etc/passwd;
 }
-
 
 # -- 03-a-3000
 # Запаметете във файл в своята home директория резултатът от командата
@@ -89,9 +90,14 @@ function 03-a-2110()
 
 function 03-a-3000()
 {
-    
-}
+    cd "$HOME";
+    ls -l >.ls.txt;
+    tr -s ' '<.ls.txt >.ls.txt.2;
+    sort -t ' ' -k 2 <.ls.txt.2 >.ls.txt.sort.l;
+    sort -t ' ' -k 2 -n <.ls.txt.2 >.ls.txt.sort.n;
 
+    rm -f .ls*;
+}
 
 # -- 03-a-5000
 # Отпечатайте 2 реда над вашия ред в /etc/passwd и 3 реда под него
@@ -99,18 +105,17 @@ function 03-a-3000()
 
 function 03-a-5000()
 {
-    
+    grep -B 2 -A 3 $(id -ur) /etc/passwd;
+    #               ^Real ID of user (name, not number).
 }
-
 
 # -- 03-a-5001
 # Колко хора не се казват Ivan според /etc/passwd
 
 function 03-a-5001()
 {
-    
+    grep -v -c "Ivan" ~/Desktop/operating_systems/passwd.txt;
 }
-
 
 # -- 03-a-5002
 # Изведете имената на хората с второ име по-дълго от 7 (>7)
@@ -118,9 +123,13 @@ function 03-a-5001()
 
 function 03-a-5002()
 {
-    
-}
+    if [[ $1 == "" ]]; then
+        set -- "8";
+    fi
 
+    cut -d ':' -f 5 ~/Desktop/operating_systems/passwd.txt | 
+        grep -E -o "[a-zA-Z]+[\t ]+[a-zA-Z]{$1,}";
+}
 
 # -- 03-a-5003
 # Изведете имената на хората с второ име по-късо от 8 (<=7)
@@ -128,25 +137,27 @@ function 03-a-5002()
 
 function 03-a-5003()
 {
-    
+    cut -f 5 -d ':' ~/Desktop/operating_systems/passwd.txt |
+        { grep -E -o "[a-zA-Z]+[\t ]+[a-zA-Z]+"; 03-a-5002; } |
+            sort |
+                uniq -u;
 }
-
 
 # -- 03-a-5004
 # Изведете целите редове от /etc/passwd за хората от 03-a-5003
 
 function 03-a-5004()
 {
-    
+    03-a-5003 | xargs -L 1 -I "NAME" \
+        grep -I "NAME" ~/Desktop/operating_systems/passwd.txt;
 }
-
 
 # -- 03-b-0300
 # Намерете факултетния си номер във файлa /etc/passwd.
 
 function 03-b-0300()
 {
-    
+    grep "45146" /etc/passwd;
 }
 
 
@@ -156,9 +167,8 @@ function 03-b-0300()
 
 function 03-b-3000()
 {
-    
+    cut -d ':' -f 1 /etc/passwd >"$HOME"/users;
 }
-
 
 # -- 03-b-3400
 # Колко коментара има във файла /etc/services ? Коментарите се
@@ -166,9 +176,8 @@ function 03-b-3000()
 
 function 03-b-3400()
 {
-    
+    grep -c -E "^.*#.*" /etc/services;
 }
-
 
 # -- 03-b-3450
 # Вижте man 5 services. Напишете команда, която ви дава името на
@@ -178,9 +187,10 @@ function 03-b-3400()
 
 function 03-b-3450()
 {
-    
+    grep -E ".*[ ]+$1/.*" /etc/services |
+        cut -d ' ' -f 1 |
+            head -n 1;
 }
-
 
 # -- 03-b-3500
 # Колко файлове в /bin са shell script? (Колко файлове в дадена
@@ -188,9 +198,9 @@ function 03-b-3450()
 
 function 03-b-3500()
 {
-    
+    file -b /bin/* | 
+        grep -c -E "(script|ASCII)";
 }
-
 
 # -- 03-b-3600
 # Направете списък с директориите на вашата файлова система, до
@@ -200,9 +210,13 @@ function 03-b-3500()
 
 function 03-b-3600()
 {
-    
-}
+    # Executable directory means you can enter and make/change/delete files.
+    find / -maxdepth 3 -type d -not -executable 2>/dev/null |
+        wc -l;
 
+    find / -maxdepth 3 -type d -executable 2>/dev/null |
+        wc -l;
+}
 
 # -- 03-b-4000
 # Създайте следната файлова йерархия.
@@ -212,9 +226,9 @@ function 03-b-3600()
 
 function 03-b-4000()
 {
-    
+    mkdir -p /home/s45146/dir1;
+    touch /home/s45146/dir1/file{1,2,3};
 }
-
 
 # Посредством vi въведете следното съдържание:
 # file1:
@@ -256,7 +270,9 @@ function 03-b-4000()
 
 function 03-b-4001()
 {
-    
+    echo "tjSOdjjoSEoj21321SDAJPJ12312jsjdaiso#@DSIOJSADOJ" >file2;
+    tr "[a-z]" "[A-Z]" <file2 >file2.new;
+    mv file2.new file2;
 }
 
 
@@ -265,7 +281,9 @@ function 03-b-4001()
 
 function 03-b-4002()
 {
-    
+    echo "1tjSOdjjoSEoj21321SDAJPJ12312jsjdaiso#@DSIOJSADOJ" >file1;
+    tr -d "[1]" <file1 >file1.new;
+    mv file1.new file1;
 }
 
 
@@ -274,7 +292,11 @@ function 03-b-4002()
 
 function 03-b-4003()
 {
-    
+    tr -d "[\n]" <file1 | 
+        sed "s/./&\n/g" |
+            sort        |
+                uniq -c |
+                    sort -b -n -k 1 -r;
 }
 
 
@@ -285,7 +307,7 @@ function 03-b-4003()
 
 function 03-b-4004()
 {
-    
+    paste -s file{1,2,3} >file4;
 }
 
 
@@ -295,7 +317,7 @@ function 03-b-4004()
 
 function 03-b-4005()
 {
-    
+    tr "[A-Z]" "[a-z]" <file1 >file2;
 }
 
 
@@ -305,7 +327,8 @@ function 03-b-4005()
 
 function 03-b-5200()
 {
-    
+    tr -d "[a]" </etc/passwd | 
+        wc -c;
 }
 
 
@@ -315,7 +338,12 @@ function 03-b-5200()
 
 function 03-b-5300()
 {
-    
+    cut -d ':' -f 1 </etc/passwd |
+        tr -d "[\n]"             |
+            sed "s/./&\n/g"      |
+                sort             |
+                    uniq -u      |
+                        wc -l;
 }
 
 
@@ -325,7 +353,7 @@ function 03-b-5300()
 
 function 03-b-5400()
 {
-    
+    grep -E -v ".*ov.*" /etc/passwd;
 }
 
 
@@ -335,7 +363,11 @@ function 03-b-5400()
 
 function 03-b-6100()
 {
-    
+    interval="$((46-28+1))"
+    head -n 46 /etc/passwd      |
+        tail -n $interval /etc/passwd  |
+            cut -d ':' -f 3     |
+                grep -o -E "[0-9]$";
 }
 
 
@@ -345,9 +377,8 @@ function 03-b-6100()
 
 function 03-b-6700()
 {
-    
+    find /tmp -readable -exec stat -c "%A %n" '{}' ';' 2>/dev/null;
 }
-
 
 # -- 03-b-6900
 # Намерете имената на 10-те файла във вашата home директория,
@@ -357,9 +388,11 @@ function 03-b-6700()
 
 function 03-b-6900()
 {
-    
+    find "$HOME"/Desktop -printf "%T@ %p\n" 2>/dev/null |
+        sort -n -r                                      |
+            head -n 10                                  |
+                cut -d ' ' -f 2;
 }
-
 
 # -- 03-b-7000
 # Файловете, които съдържат C код, завършват на `.c`.
@@ -368,9 +401,9 @@ function 03-b-6900()
 
 function 03-b-7000()
 {
-    
-}
 
+    find / -type f -name "*.c" -exec wc -l '{}' ';' 2>/dev/null;
+}
 
 # -- 03-b-7500
 # Даден ви е ASCII текстов файл (например /etc/services). Отпечатайте
@@ -378,7 +411,13 @@ function 03-b-7000()
 
 function 03-b-7500()
 {
-    
+    cat /etc/services               | 
+        tr ' ' '\n'                 | 
+            sort                    | 
+                uniq -c             | 
+                    sort -n -r      | 
+                        tail -n +2  | 
+                            head -n 10;
 }
 
 
@@ -388,19 +427,26 @@ function 03-b-7500()
 
 function 03-b-8000()
 {
-    
+    cat ~/Desktop/operating_systems/passwd.txt  | 
+        cut -d ':' -f 6                         | 
+            grep "/home/SI/s"                   | 
+                cut -c11-                       |
+                    sort -n >"$HOME"/Desktop/operating_systems/SI.txt;
 }
-
 
 # -- 03-b-8500
 # За всеки логнат потребител изпишете "Hello, потребител", като ако
 # това е вашият потребител, напишете "Hello, потребител - this is me!".
-
 function 03-b-8500()
 {
-    
+    w -sh                   |
+        grep -v "$(whoami)" |
+            cut -d ' ' -f 1 |
+                sort        |
+                    uniq    |
+                        xargs -L 1 echo "Hello, ";
+    echo "Hello, $(whoami) - this is me!";
 }
-
 
 # Пример:
 # hello, human - this is me!
@@ -412,9 +458,12 @@ function 03-b-8500()
 
 function 03-b-8520()
 {
-    
+    grep -Ea "^s[0-9]*:" ~/Desktop/operating_systems/passwd.txt  |
+        cut -d ':' -f 5                                         |
+            cut -d ',' -f 1                                     |
+                grep -Eoa "[a-zA-Zа-яА-Я]+[\t ]+[a-zA-Zа-яА-Я]+"         |
+                    tr "[a-zа-я]" "[A-ZА-Я]";
 }
-
 
 # -- 03-b-8600
 # Shell Script-овете са файлове, които по конвенция имат разширение
@@ -424,21 +473,29 @@ function 03-b-8520()
 
 function 03-b-8600()
 {
-    
+    find / -type f -name *.sh -exec head -n 1 '{}' ';' 2>/dev/null |
+        grep -Eo "#!.*[\t ]*"                                      |
+            tr -d "[ \t]"                                          |
+                cut -c3-                                           |
+                    sort                                           |
+                        uniq -c                                    |
+                            sort -n -r;
 }
-
 
 # Намерете всички .sh файлове и проверете кой е най-често използваният
 # интерпретатор.
-
-
 
 # -- 03-b-8700
 # Намерете 5-те най-големи групи подредени по броя на потребителите в тях.
 
 function 03-b-8700()
 {
-    
+    sort -r /etc/group              | 
+        uniq -c                     |
+            tr -s "[ ]"             |
+                cut -d ' ' -f 3     | 
+                    cut -d ':' -f 1 | 
+                        head -n 1
 }
 
 
@@ -449,16 +506,16 @@ function 03-b-8700()
 
 function 03-b-9000()
 {
-    
+    rm eternity && touch eternity;
+    find / -mmin -16 -printf "%p %TH\n" 1>>eternity 2>/dev/null;
 }
-
 
 # -- 03-b-9050
 # Копирайте файл /home/tony/population.csv във вашата home директория.
 
 function 03-b-9050()
 {
-    
+    cp /home/tony/population.csv "$HOME"/;
 }
 
 
@@ -468,7 +525,20 @@ function 03-b-9050()
 
 function 03-b-9051()
 {
-    
+    # 2008
+    grep -E ".*,.*,2008,.*" ~/Desktop/operating_systems/population.csv  |
+        cut -d ',' -f 4                                                 |             
+            tr "[\n]" "[ ]"                                             | 
+                sed "s/ / + /g"                                         | 
+                    xargs -I "EXPR" echo "EXPR" "0"                     | 
+                        bc
+    # 2016
+    grep -E ".*,.*,2008,.*" ~/Desktop/operating_systems/population.csv  |
+        cut -d ',' -f 4                                                 |             
+            tr "[\n]" "[ ]"                                             | 
+                sed "s/ / + /g"                                         | 
+                    xargs -I "EXPR" echo "EXPR" "0"                     | 
+                        bc
 }
 
 
@@ -478,9 +548,11 @@ function 03-b-9051()
 
 function 03-b-9052()
 {
-    
+    grep "Bulgaria" ~/Desktop/operating_systems/population.csv |
+        sort -n -t ',' -k 4 -r |
+            head -n 1 |
+                cut -d ',' -f 3
 }
-
 
 # -- 03-b-9053
 # Използвайки файл population.csv, намерете коя държава има най-много
@@ -489,9 +561,16 @@ function 03-b-9052()
 
 function 03-b-9053()
 {
-    
-}
+    grep -E ".*,.*,2016,.*" ~/Desktop/operating_systems/population.csv |
+        sort -n -t ',' -k 4 -r |
+            head -n 1 |
+                grep -Eo "(^\".*\"|^[^\",]+)"
 
+    grep -E ".*,.*,2016,.*" ~/Desktop/operating_systems/population.csv |
+        sort -n -t ',' -k 4 |
+            head -n 1 |
+                grep -Eo "\".*\""
+}
 
 # -- 03-b-9054
 # Използвайки файл population.csv, намерете коя държава е на 42-ро
@@ -499,9 +578,10 @@ function 03-b-9053()
 
 function 03-b-9054()
 {
-    
+    grep ".*,.*,1969,.*" ~/Desktop/operating_systems/population.csv |
+        sort -t ',' -k 4 -n -r |
+            cut -d $'\n' -f 42;
 }
-
 
 # -- 03-b-9100
 # В home директорията си изпълнете командата `curl -o songs.tar.gz
@@ -509,7 +589,7 @@ function 03-b-9054()
 
 function 03-b-9100()
 {
-    
+    echo "TODO:";
 }
 
 
@@ -519,7 +599,7 @@ function 03-b-9100()
 
 function 03-b-9101()
 {
-    
+    echo "TODO:";
 }
 
 
@@ -528,7 +608,7 @@ function 03-b-9101()
 
 function 03-b-9102()
 {
-    
+    echo "TODO:";
 }
 
 
@@ -538,7 +618,7 @@ function 03-b-9102()
 
 function 03-b-9103()
 {
-    
+    echo "TODO:";
 }
 
 
@@ -547,7 +627,7 @@ function 03-b-9103()
 
 function 03-b-9104()
 {
-    
+    echo "TODO:";
 }
 
 
@@ -556,7 +636,7 @@ function 03-b-9104()
 
 function 03-b-9105()
 {
-    
+    echo "TODO:";
 }
 
 
@@ -567,7 +647,7 @@ function 03-b-9105()
 
 function 03-b-9106()
 {
-    
+    echo "TODO:";
 }
 
 
@@ -578,7 +658,7 @@ function 03-b-9106()
 
 function 03-b-9200()
 {
-    
+    echo "TODO:";
 }
 
 
@@ -590,7 +670,7 @@ function 03-b-9200()
 
 function 03-b-9300()
 {
-    
+    echo "TODO:";
 }
 
 
@@ -637,7 +717,7 @@ function 03-b-9300()
 
 function 03-b-9500()
 {
-    
+    echo "TODO:";
 }
 
 
